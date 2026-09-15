@@ -16,7 +16,7 @@
 
 | Họ và tên | MSSV | GitHub | Vai trò và công việc | File/commit/PR |
 |---|---|---|---|---|
-| Mai Huy Hoàng | 2A202602685 | [huyhoangg1706](https://github.com/huyhoang1706) | Technical Leader; UI và tích hợp backend | `4fe4c5d`, `f15a5b5`, `db5ccd2`; PR #9, #22 |
+| Mai Huy Hoàng | 2A202602685 | [huyhoangg1706](https://github.com/huyhoang1706) | Technical Leader; UI, tích hợp backend, chạy group/adversarial eval và transcript | `4fe4c5d`, `f15a5b5`, `db5ccd2`, `1455eb2`; PR #9, #22, #25 |
 | Nguyễn Thị Hải Mi | 2A202602667 | [haimi612003](https://github.com/haimi612003) | Teammate; chạy eval, version log và report | `fee7e07`, `98a93c3`, `8d7230a`, `525bdc1`; PR #4, #15, #17, #21 |
 | Trần Nguyễn Trí Dũng | 2A202602784 | [bananayass](https://github.com/bananayass) | Teammate; phân tích prompt và cải thiện `system_prompt.md` | `2a170df`, `05d76d8`, `0bd2ada`, `dce92ab`, `fdf1e99`; PR #5, #10, #14, #20 |
 | Nguyễn Đức Đông | 2A202602367 | [nguyenducdong22](https://github.com/nguyenducdong22) | Teammate; viết group eval và phân tích run | `5265a9e`, `c92f105`, `f2c185b`; PR #3, #6, #19 |
@@ -24,10 +24,29 @@
 
 ## Nhận xét chung
 
-- Kết quả và bằng chứng:
-- Thay đổi hiệu quả nhất:
-- Giới hạn còn lại:
-- Cách phân công và tích hợp:
+- Kết quả và bằng chứng: Case accuracy của bộ base tăng từ 21/30 ở v0 lên
+  30/30 ở v3. Với artifact v3, bộ group đạt 5/10 và bộ adversarial đạt 11/12;
+  cả hai run có `provider_error_cases = 0` và `measured_cases = total_cases`.
+  Bằng chứng gồm `version_log.csv`, các file trong `starter_v0/runs/`, bốn
+  transcript v3, UI/API và lịch sử commit/PR của từng thành viên.
+
+- Thay đổi hiệu quả nhất: Việc bổ sung quy tắc không tự đoán ID, bắt buộc hỏi
+  lại khi thiếu thông tin, xác nhận đúng payload trước khi tạo ticket và thiết
+  lập trust boundary cho user/tool result giúp bộ base tăng từ 70% lên 100%.
+  Mô tả tool rõ phạm vi và tham số cũng giảm lỗi chọn sai tool và sai argument.
+
+- Giới hạn còn lại: Bộ group mới đạt 5/10, còn lỗi chọn giá trị argument, hỏi
+  lại chưa đúng loại câu trả lời và xử lý trust boundary. Bộ adversarial còn
+  thất bại ở A03: model cố gọi `create_ticket` với `summary` rỗng, nhưng runtime
+  đã chặn nên không tạo ticket. Kết quả cho thấy base đạt 30/30 chưa chứng minh
+  agent tổng quát hóa tốt cho mọi cách diễn đạt.
+
+- Cách phân công và tích hợp: Dũng phân tích và cải thiện system prompt; Huy
+  phân tích và cải thiện tool schema; Mi chạy các vòng eval v0–v3, cập nhật
+  version log và report; Đông viết group cases và phân tích run; Hoàng phụ
+  trách UI, AG-UI backend, chạy group/adversarial và tạo transcript. Các phần
+  được tích hợp vào `main` qua PR, sau đó đối chiếu artifact hash, run,
+  transcript và commit trước khi chốt.
 
 ## INDIVIDUAL
 
@@ -134,4 +153,41 @@ Temperature 0 vẫn cho kết quả khác nhau giữa các lần chạy.
   commit `.env` hay ticket phát sinh.
 - Thời điểm đã tự nộp URL repo chung trên VLearn: 23:45:00 PM 15/9/2026.
 
-### Họ và tên - MSSV
+### Mai Huy Hoàng - 2A202602685
+
+- Phần việc và file/commit/PR: Làm Technical Leader; dựng giao diện chat trong
+  `ui/`; tích hợp frontend với backend AG-UI trong `api.py`; cấu hình CORS cho
+  frontend ở port 5173; tách dependency API vào `requirements-api.txt`; viết
+  `tests/test_api.py`; dùng AI Elements cho prompt input, tool widget và render
+  Markdown. Chạy bộ group và adversarial bằng OpenAI `gpt-4o-mini`, đồng thời
+  tạo bốn transcript v3 cho yêu cầu bình thường, thiếu thông tin, hủy yêu cầu
+  và xác nhận hành động ghi dữ liệu.
+  - `4fe4c5d` (PR #9): scaffold giao diện chat.
+  - `f15a5b5`, `db5ccd2` (PR #22): tích hợp AG-UI API, hoàn thiện UI và hiển
+    thị tool call/input/result.
+  - `1455eb2` (PR #25): chạy group 5/10, adversarial 11/12 và lưu bốn
+    transcript; cả hai run có `provider_error_cases = 0`.
+- Quyết định, khó khăn và cách xử lý: Chọn tái sử dụng provider, tool registry
+  và tool executor của `starter_v0` trong API để tránh tạo thêm một luồng xử lý
+  khác với CLI; chuyển kết quả sang các event AG-UI để TanStack AI nhận được cả
+  text và vòng đời tool call. Phần khó là đồng bộ định dạng `UIMessage` với SSE,
+  ghép đúng `toolCallId`, render Markdown và xử lý style Tailwind. Mình xử lý
+  bằng test cho text/CORS, clarification và provider error; sau đó dùng
+  `PromptInput`, `Tool` và `MessageResponse` của AI Elements thay cho component
+  tự viết. Với eval, mình giữ nguyên kết quả chưa hoàn hảo làm bằng chứng thay
+  vì sửa hoặc chạy lại để che lỗi: bộ group còn sai argument/trust boundary và
+  adversarial còn một case A03.
+- Điều đã học: UI hiển thị được câu trả lời chưa đủ để chứng minh agent chạy
+  đúng; cần kiểm tra riêng contract SSE, input/result của tool và trạng thái lỗi.
+  Kết quả base v3 đạt cao không bảo đảm tổng quát hóa sang case nhóm hoặc dữ
+  liệu đối kháng, vì group chỉ đạt 5/10 và adversarial đạt 11/12. Với hành động
+  ghi dữ liệu, confirmation trong prompt cần đi cùng validation ở runtime; ở
+  case A03, model vẫn gọi `create_ticket` sai nhưng tool đã chặn do thiếu
+  `summary`.
+- AI/công cụ đã dùng và cách kiểm tra: Dùng Codex để hỗ trợ dựng UI/API, chẩn
+  đoán lỗi tích hợp và rà soát code; dùng Git và GitHub CLI để đối chiếu commit,
+  PR; dùng OpenAI `gpt-4o-mini`, `run_eval.py` và `chat.py` để tạo run/transcript
+  thật. Đã chạy `pnpm run build` thành công; kiểm tra trực tiếp summary của hai
+  run, `actual_tool_calls`, `tool_results`, trạng thái từng transcript và xác
+  nhận không đưa API key hay ticket phát sinh vào commit.
+- Thời điểm đã tự nộp URL repo chung trên VLearn: 23:45:32 15/9/2026

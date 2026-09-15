@@ -2,6 +2,7 @@ import { fetchServerSentEvents, type UIMessage, useChat } from '@tanstack/ai-rea
 import { Bot, CircleAlert, Eraser, Wrench } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Conversation, ConversationContent, ConversationEmptyState, ConversationScrollButton } from '@/components/ai-elements/conversation'
+import { PromptInput, PromptInputBody, PromptInputFooter, PromptInputSubmit, PromptInputTextarea, type PromptInputMessage } from '@/components/ai-elements/prompt-input'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -48,8 +49,8 @@ function App() {
   const chat = useChat({ connection, threadId: 'helpdesk-demo' })
   const [input, setInput] = useState('')
 
-  async function submit() {
-    const text = input.trim()
+  async function submit(message: PromptInputMessage) {
+    const text = message.text.trim()
     if (!text || chat.isLoading) return
     setInput('')
     await chat.sendMessage(text)
@@ -61,8 +62,7 @@ function App() {
         <header className="flex items-center gap-3 border-b px-5 py-4">
           <div className="grid size-9 place-items-center rounded-lg bg-primary text-primary-foreground"><Bot className="size-5" /></div>
           <div>
-            <h1 className="m-0 text-base font-semibold tracking-normal">IT Helpdesk Agent</h1>
-            <p className="text-xs text-muted-foreground">TanStack AI chat state · version v0</p>
+            <h1 className="m-0 text-base font-semibold tracking-normal text-black">IT Helpdesk Agent</h1>
           </div>
           <Badge variant={chat.isLoading ? 'secondary' : 'outline'} className="ml-auto">{chat.isLoading ? 'Streaming' : 'Ready'}</Badge>
           <Button variant="ghost" size="sm" onClick={chat.clear} disabled={chat.messages.length === 0}><Eraser /> Clear</Button>
@@ -80,12 +80,14 @@ function App() {
 
         <footer className="border-t bg-background p-4">
           <div className="mx-auto max-w-3xl">
-            <form className="flex items-end gap-2" onSubmit={(event) => { event.preventDefault(); void submit() }}>
-              <textarea className="min-h-20 flex-1 resize-none rounded-xl border bg-background px-3 py-2 text-sm outline-none ring-ring/50 focus:ring-2" value={input} onChange={(event) => setInput(event.target.value)} placeholder="Describe an IT issue or ask for help…" disabled={chat.isLoading} />
-              <Button type="submit" disabled={!input.trim() || chat.isLoading}>{chat.isLoading ? 'Working…' : 'Send'}</Button>
-              {chat.isLoading && <Button type="button" variant="outline" onClick={chat.stop}>Stop</Button>}
-            </form>
-            <p className="mt-2 text-center text-xs text-muted-foreground">Endpoint: <code>{chatEndpoint}</code> · Tool activity is rendered from TanStack message parts.</p>
+            <PromptInput onSubmit={submit}>
+              <PromptInputBody>
+                <PromptInputTextarea aria-label="Message" value={input} onChange={(event) => setInput(event.target.value)} placeholder="Describe an IT issue or ask for help…" disabled={chat.isLoading} />
+              </PromptInputBody>
+              <PromptInputFooter className="justify-end">
+                <PromptInputSubmit status={chat.isLoading ? 'streaming' : 'ready'} onStop={chat.stop} disabled={!chat.isLoading && !input.trim()} />
+              </PromptInputFooter>
+            </PromptInput>
           </div>
         </footer>
       </section>

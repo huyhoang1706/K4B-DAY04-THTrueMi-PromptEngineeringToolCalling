@@ -5,6 +5,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Defaults must stay below Tailwind utilities in the cascade. */
+@layer base {
 :root {
   --text: #6b6375;
   --text-h: #08060d;
@@ -177,6 +179,8 @@ code {
   background: var(--code-bg);
 }
 
+}
+
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: 'Geist Variable', sans-serif;
@@ -220,6 +224,7 @@ code {
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+@layer base {
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -254,13 +259,12 @@ code {
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-@layer base {
   * {
     @apply border-border outline-ring/50;}
   body {
     @apply bg-background text-foreground;}
   html {
-    @apply font-sans;}}
+    @apply font-sans;}
 
 #root {
   width: 100%;
@@ -273,3 +277,4 @@ code {
 }
 
 body { margin: 0; }
+}

@@ -91,4 +91,47 @@ Sao chép mục này cho từng thành viên.
   cả arguments lẫn tool results trong run v1.
 - Thời điểm đã tự nộp URL repo chung trên VLearn: 9:04:51 PM 15/9/2026.
 
+### Nguyễn Thị Hải Mi - 2A202602667
+
+- Phần việc và file/commit/PR: Chạy eval chính thức (openai / gpt-4o-mini, bộ
+  `data/eval_base.json`) cho v0–v3, lưu run trong `starter_v0/runs/` và ghi
+  `starter_v0/artifacts/version_log.csv` sau từng vòng; điền mục A2, A3, B1,
+  B2, B4a (v0) trong `starter_v0/artifacts/REPORT.md`.
+  - `fee7e07` (PR #4): baseline v0 — base 21/30, adversarial 5/12, extension
+    6/10; phân tích 9 case FAIL và 7 case adversarial.
+  - `98a93c3` (PR #15): v1 (prompt của Dũng, commit `10c1c34`) — base 26/30.
+  - `8d7230a` (PR #17): v2 (tools.yaml của Huy, commit `88b9808`) — base 28/30.
+  - `525bdc1` (PR #21): v3 (bản cuối, commit `b91fd8d`) — base 30/30.
+  - `65da56f` (PR #12): REPORT A2 (bảng 9 tool) và A3 (câu hỏi mẫu).
+  - `8e36645` (PR #1): thông tin thành viên trong TEAM.md.
+- Quyết định, khó khăn và cách xử lý:
+  - Prompt và tools được hai bạn merge cùng lúc với cùng nhãn "v1"/"v3", nên
+    một run trên `main` sẽ gộp hai thay đổi. Mình chạy từng vòng tại đúng
+    commit của vòng đó (dùng `git worktree`) để v1 và v2 mỗi vòng chỉ đổi một
+    artifact; v3 chạy trên bản cuối và ghi rõ trong version log là gộp
+    `system_prompt.md` + `tools.yaml`.
+  - Trước mỗi run kiểm tra hash prompt/tools khác vòng trước và code Python
+    không đổi; sau mỗi run kiểm tra `provider_error_cases = 0`,
+    `measured_cases = total_cases`, đọc `tool_results` và thư mục `tickets/`.
+  - Khó khăn:
+Lúc đầu chưa có API key nên chưa chạy được v0.
+Dũng và Huy merge thay đổi cùng lúc và cùng đặt nhãn "v1", sau đó lại cùng "v3", nên phải quyết định chạy ở commit nào.
+Hiểu vì sao cùng một nhãn version lại phải kiểm tra bằng hash.
+File phân tích của Dũng dẫn tới run không tồn tại, và có con số "v2" khác với log.
+Cùng artifact v3 nhưng A10 lúc bị vượt qua (tạo ticket thật), lúc không.
+
+- Điều đã học:
+Điểm tự động PASS nhưng tool vẫn trả kết quả rỗng: ở v2, H03 không tìm được bài KB nào.
+Bộ base đạt 30/30 nhưng bộ nhóm tự viết chỉ đạt 5/10.
+Có những lần agent không làm hại được, nhưng là nhờ code của tool chặn chứ không phải prompt (A05, A12 ở v0).
+Mỗi vòng chỉ đổi 1 thứ thì mới biết thay đổi nào có tác dụng.
+Temperature 0 vẫn cho kết quả khác nhau giữa các lần chạy.
+
+- AI/công cụ đã dùng và cách kiểm tra: Dùng Claude Code (Claude Opus 5) để
+  chạy lệnh eval, đọc run JSON, soạn bảng phân tích, version log, commit và
+  PR. Kiểm tra lại bằng cách đối chiếu hash artifact trong run với commit,
+  xem `actual_tool_calls`/`tool_results` từng case FAIL và kiểm tra không
+  commit `.env` hay ticket phát sinh.
+- Thời điểm đã tự nộp URL repo chung trên VLearn: 23:45:00 PM 15/9/2026.
+
 ### Họ và tên - MSSV

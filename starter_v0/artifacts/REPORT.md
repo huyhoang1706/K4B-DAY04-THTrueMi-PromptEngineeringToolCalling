@@ -27,13 +27,24 @@
 | Tool | Chức năng | Core / optional / team-built |
 |---|---|---|
 | clarify | Hỏi bổ sung hoặc xác nhận | core |
-|  |  |  |
+| search_kb | Tìm bài hướng dẫn xử lý sự cố trong knowledge base nội bộ (VPN, Wi-Fi, email, máy in…); không kiểm tra thiết bị thật | core |
+| check_service_status | Xem trạng thái dịch vụ dùng chung (vpn, email, wifi…) theo môi trường `production` / `staging`; không chẩn đoán máy cá nhân | core |
+| inspect_device | Đọc snapshot chẩn đoán của một thiết bị theo asset ID; `check` = all, network, vpn, security, hardware, software | core |
+| lookup_user | Tra thông tin công việc của nhân viên theo employee ID và danh sách asset được cấp; không trả credential | core |
+| format_incident_report | Trình bày các finding đã có thành báo cáo markdown theo template; không tự thu thập thêm dữ liệu | core |
+| policy | Tra chính sách IT nội bộ theo `policy_area` (access_control, data_privacy, external_tools, incident_response, service_operations, ticketing) | optional |
+| create_ticket | Tạo ticket helpdesk giả lập (ghi file cục bộ); chỉ ghi khi `confirmed=true`, từ chối asset ID không hợp lệ và nội dung chứa password/token/MFA | optional |
+| search_device_info | Tìm thông số, driver, trang hỗ trợ chính hãng trên web (Tavily) theo hãng và model; cấm gửi asset ID, employee ID, log nội bộ | optional |
+
+Nhóm chưa tự xây tool mới (team-built). Tên và `track` lấy từ `tools/<tool>/TOOL.md`, khớp registry `tools/__init__.py`. `search_device_info` cần `TAVILY_API_KEY`; key này hiện chưa cấu hình nên tool sẽ trả lỗi khi demo.
 
 ## A3. Câu hỏi mẫu
 
-1.
-2.
-3.
+Ba câu dưới đây đã chạy đúng tool và đúng tham số trong run v0 ([runs/v0_B_base_openai_20260915T184512171021.json](../runs/v0_B_base_openai_20260915T184512171021.json)). Cần kiểm tra lại trên version cuối.
+
+1. "Dịch vụ VPN production hiện có đang gặp sự cố không?" → `check_service_status(service="vpn", environment="production")` → trả về `status: degraded` (case H01).
+2. "Kiểm tra riêng kết nối VPN trên LT-204." → `inspect_device(asset_id="LT-204", check="vpn")` → snapshot VPN của laptop Lenovo ThinkPad T14 Gen 4 (case H05).
+3. "Tìm hướng dẫn cấu hình Outlook profile trên Windows 11." → `search_kb(query="cấu hình Outlook profile", category="email")` → bài `KB-EMAIL-002` (case H03).
 
 ## A4. Kịch bản demo đã rehearse
 

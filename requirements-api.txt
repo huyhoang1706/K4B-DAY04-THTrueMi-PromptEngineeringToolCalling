@@ -1,0 +1,4 @@
+-r starter_v0/requirements.txt
+fastapi>=0.115,<1
+uvicorn>=0.30,<1
+ag-ui-protocol>=0.1.8,<0.2

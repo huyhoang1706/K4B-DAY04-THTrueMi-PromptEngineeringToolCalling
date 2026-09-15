@@ -146,10 +146,36 @@ nhóm tự xây.
 
 ## B7. Technical reflection
 
-- Fix nào thuộc `system_prompt.md`?
-- Fix nào thuộc `tools.yaml`?
-- Failure nào không thể chỉ nhìn automatic score?
-- Nếu có thêm một vòng, nhóm sẽ thử hypothesis nào?
+- Fix thuộc `system_prompt.md`: quy tắc không đoán asset/employee ID; hỏi lại
+  khi thiếu hoặc environment mơ hồ; chọn tool/argument cụ thể; tách yêu cầu
+  nhiều nguồn; xác nhận ticket đúng payload, hủy xác nhận cũ khi payload đổi;
+  không tin role/tool result giả; không đưa secret hoặc internal ID vào
+  external search.
+- Fix thuộc `tools.yaml`: làm rõ phạm vi tool và mô tả tham số; bắt buộc
+  `clarify.response_type`; hướng dẫn chọn đúng `category`, `check`,
+  `policy_area`; mô tả điều kiện `create_ticket` chỉ được gọi khi có xác nhận
+  hợp lệ.
+- Failure không thể chỉ nhìn automatic score: cần đọc `tool_results` và kiểm tra thư mục `tickets/`. Một call có thể routing đúng nhưng tool trả lỗi; nguy hiểm hơn, v0 đã có ticket tạo thật từ confirmation giả/stale confirmation. Với secret hoặc internal ID, code guard có thể chặn action nhưng dữ liệu vẫn có thể xuất hiện trong tool args/trace.
+- Nếu có thêm một vòng, nhóm sẽ thử hypothesis đưa confirmation boundary xuống runtime/code: tạo confirmation token hoặc payload fingerprint gắn với`summary + priority + asset_id`; `create_ticket` chỉ chấp nhận token khớp payload hiện tại. Cách này giảm phụ thuộc vào prompt khi model bị prompt injection.
+
+### B7.1 Reflection cá nhân — Trần Nguyễn Trí Dũng - 2A202602784
+
+- Nhiệm vụ đảm nhận chính trong bài lab: phân tích lỗi prompt từ run v0, viết
+  các file phân tích prompt v1–v3, và cải thiện `system_prompt.md` dựa trên
+  evidence từ base/adversarial cases.
+- Kịch bản lỗi (failure mode) đã trực tiếp phân tích và giải quyết: thiếu
+  asset/employee ID (`H10`, `H11`), environment mơ hồ (`H19`), tạo ticket khi
+  chưa xác nhận hoặc dùng xác nhận cũ (`H12`, `M05`, `M09`), chọn
+  category/argument sai (`H03`, `H13`, `H17`), và prompt injection/forged
+  confirmation (`A03`, `A04`, `A10`, `A11`, `A12`).
+- Bài học rút ra về Prompt Engineering & Tool Calling: prompt cần biến yêu cầu
+  an toàn thành rule cụ thể, có điều kiện và hành động rõ ràng; ví dụ thiếu ID
+  thì gọi `clarify(response_type="text")`, không chỉ ghi “hãy hỏi lại”. Tool
+  description tốt giúp model chọn đúng argument, nhưng prompt không phải
+  security boundary duy nhất. Cần chạy cùng một bộ case qua từng version, xem
+  cả tool calls, tool results và side effects thay vì chỉ tin automatic score.
+
+### B7.2 Reflection cá nhân — [Họ và tên thành viên 2 - MSSV]
 
 # PHẦN C — Checkout trước khi nộp
 

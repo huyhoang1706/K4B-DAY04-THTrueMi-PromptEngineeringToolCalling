@@ -9,7 +9,7 @@
 
 - Team: TH True Mi
 - Thành viên và INDIVIDUAL: [TEAM.md](../../TEAM.md)
-- Members: Mai Huy Hoàng (2A202602685), Nguyễn Thị Hải Mi (2A202602667)
+- Members: Mai Huy Hoàng (2A202602685), Nguyễn Thị Hải Mi (2A202602667), Nguyễn Đức Đông (2A202602367), Trần Nguyễn Trí Dũng (2A202602784)
 - Provider/model: `openai` / `gpt-4o-mini` (temperature 0; giữ nguyên cho v0–v3)
 
 # PHẦN A — Giới thiệu agent

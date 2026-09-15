@@ -1,7 +1,283 @@
 {
   "dataset_id": "day04_v3_helpdesk_group",
   "dataset_role": "group",
-  "description": "Template intentionally left empty. The team must write exactly 10 original IT helpdesk cases: 5 single-turn query cases and 5 multi-turn turns cases.",
-  "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
-  "cases": []
+  "description": "Original team evaluation dataset for IT Helpdesk Agent: exactly 10 cases (5 single-turn, 5 multi-turn) testing realistic enterprise IT support scenarios, edge cases, and boundaries.",
+  "allowed_failure_types": [
+    "wrong_tool",
+    "wrong_arg_value",
+    "wrong_boundary",
+    "unnecessary_tool",
+    "out_of_scope",
+    "missing_info"
+  ],
+  "cases": [
+    {
+      "id": "G01_device_hardware_check",
+      "phase": "B",
+      "suite": "group",
+      "query": "Laptop LT-318 bị kêu to ở quạt và nóng bất thường, hãy kiểm tra phần cứng máy này.",
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "inspect_device",
+            "args": {
+              "asset_id": "LT-318",
+              "check": "hardware"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "device_hardware_check",
+        "difficulty": "medium",
+        "what_it_tests": "Chọn đúng check='hardware' khi user mô tả lỗi quạt/nhiệt độ."
+      }
+    },
+    {
+      "id": "G02_missing_service_name",
+      "phase": "B",
+      "suite": "group",
+      "query": "Môi trường production hiện tại có dịch vụ nào đang bị gián đoạn không?",
+      "failure_type": "missing_info",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "choice",
+              "options": [
+                "vpn",
+                "email",
+                "wifi",
+                "sso"
+              ]
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "clarify_missing_service",
+        "difficulty": "medium",
+        "what_it_tests": "Không tự đoán dịch vụ khi user hỏi chung chung về production mà phải làm rõ."
+      }
+    },
+    {
+      "id": "G03_password_reset_policy",
+      "phase": "B",
+      "suite": "group",
+      "query": "Quy định công ty về thời gian và độ dài tối thiểu khi đổi mật khẩu tài khoản là gì?",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "policy",
+            "args": {
+              "policy_area": "access_control"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "policy_access_control",
+        "difficulty": "easy",
+        "what_it_tests": "Tra cứu chính sách mật khẩu phải dùng policy với area access_control."
+      }
+    },
+    {
+      "id": "G04_external_specs_public",
+      "phase": "B",
+      "suite": "group",
+      "query": "Tra cứu thông số kỹ thuật công khai của dòng laptop Dell Latitude 7420 trên web.",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "search_device_info",
+            "args": {
+              "model": "Dell Latitude 7420"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "external_device_search",
+        "difficulty": "easy",
+        "what_it_tests": "Tra cứu thông số dòng máy công khai dùng search_device_info không kèm mã nội bộ."
+      }
+    },
+    {
+      "id": "G05_non_it_request",
+      "phase": "B",
+      "suite": "group",
+      "query": "Tôi muốn đặt lịch phòng họp lớn tại tầng 3 cho cuộc họp chiều mai.",
+      "failure_type": "out_of_scope",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "metadata": {
+        "skill": "out_of_scope",
+        "difficulty": "easy",
+        "what_it_tests": "Yêu cầu đặt phòng họp nằm ngoài phạm vi IT desk, từ chối lịch sự không gọi tool."
+      }
+    },
+    {
+      "id": "G06_multiturn_clarify_then_status",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Kiểm tra hệ thống SSO giúp tôi."
+        },
+        {
+          "role": "user",
+          "content": "Môi trường staging nhé."
+        }
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "check_service_status",
+            "args": {
+              "service": "sso",
+              "environment": "staging"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_status_carry",
+        "difficulty": "medium",
+        "what_it_tests": "Kết hợp service từ turn 1 và environment từ turn 2."
+      }
+    },
+    {
+      "id": "G07_multiturn_ticket_confirmation",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tạo ticket sự cố màn hình máy LT-240 mức low."
+        },
+        {
+          "role": "user",
+          "content": "Tôi muốn nâng mức ưu tiên lên critical vì không làm việc được."
+        },
+        {
+          "role": "user",
+          "content": "Xác nhận tạo ticket theo thông tin trên."
+        }
+      ],
+      "failure_type": "wrong_boundary",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "create_ticket",
+            "args": {
+              "title": "Lỗi màn hình máy LT-240",
+              "priority": "critical",
+              "asset_id": "LT-240",
+              "confirmed": true
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_ticket_confirmed_after_revision",
+        "difficulty": "hard",
+        "what_it_tests": "Tạo ticket sau khi đã có xác nhận rõ ràng ở lượt cuối, giữ priority mới nhất."
+      }
+    },
+    {
+      "id": "G08_multiturn_cancel_ticket",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Chuẩn bị tạo ticket lỗi mạng cho máy LT-204 giúp tôi."
+        },
+        {
+          "role": "user",
+          "content": "À tôi vừa cắm lại dây mạng thì chạy được rồi, hủy không cần tạo ticket nữa."
+        }
+      ],
+      "failure_type": "unnecessary_tool",
+      "expect": {
+        "no_tool": true,
+        "behavior": "acknowledge_cancellation"
+      },
+      "metadata": {
+        "skill": "multiturn_cancellation",
+        "difficulty": "medium",
+        "what_it_tests": "User hủy tạo ticket ở lượt sau thì không được gọi create_ticket hay clarify xác nhận."
+      }
+    },
+    {
+      "id": "G09_multiturn_switch_employee",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tra cứu thông tin tài khoản nhân viên EMP-1002."
+        },
+        {
+          "role": "user",
+          "content": "Tôi đọc nhầm mã, người cần tra là EMP-1004."
+        }
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup_user",
+            "args": {
+              "employee_id": "EMP-1004"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_employee_override",
+        "difficulty": "easy",
+        "what_it_tests": "Cập nhật mã nhân viên mới nhất ở lượt 2."
+      }
+    },
+    {
+      "id": "G10_multiturn_triage_to_kb",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Kiểm tra kết nối mạng của laptop LT-240."
+        },
+        {
+          "role": "user",
+          "content": "Không cần kiểm tra máy nữa, tìm bài viết hướng dẫn kết nối Wi-Fi văn phòng."
+        }
+      ],
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "search_kb",
+            "args": {
+              "category": "wifi"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_intent_switch_to_kb",
+        "difficulty": "medium",
+        "what_it_tests": "Chuyển hẳn từ kiểm tra thiết bị sang tra cứu hướng dẫn KB."
+      }
+    }
+  ]
 }

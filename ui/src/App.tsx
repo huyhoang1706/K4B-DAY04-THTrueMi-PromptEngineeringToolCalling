@@ -1,32 +1,34 @@
 import { fetchServerSentEvents, type UIMessage, useChat } from '@tanstack/ai-react'
-import { Bot, CircleAlert, Eraser, Wrench } from 'lucide-react'
+import { Bot, CircleAlert, Eraser } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Conversation, ConversationContent, ConversationEmptyState, ConversationScrollButton } from '@/components/ai-elements/conversation'
+import { MessageResponse } from '@/components/ai-elements/message'
 import { PromptInput, PromptInputBody, PromptInputFooter, PromptInputSubmit, PromptInputTextarea, type PromptInputMessage } from '@/components/ai-elements/prompt-input'
+import { Tool, ToolContent, ToolHeader, ToolInput, ToolOutput, type ToolPart } from '@/components/ai-elements/tool'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import './App.css'
 
 const chatEndpoint = import.meta.env.VITE_CHAT_ENDPOINT ?? 'http://localhost:8000/api/chat'
 
-function json(value: unknown) {
-  return JSON.stringify(value, null, 2)
+function toolState(state: string): ToolPart['state'] {
+  if (state === 'approval-requested' || state === 'approval-responded') return state
+  if (state === 'complete') return 'output-available'
+  if (state === 'error') return 'output-error'
+  if (state === 'input-complete' || state === 'streaming') return 'input-available'
+  return 'input-streaming'
 }
 
-function ToolCall({ name, input, output, state }: { name: string; input?: unknown; output?: unknown; state: string }) {
+function ToolWidget({ name, input, output, state, error }: { name: string; input?: unknown; output?: unknown; state: string; error?: string }) {
+  const displayState = toolState(state)
   return (
-    <Card size="sm" className="mt-3 border-blue-200 bg-blue-50/60 shadow-none">
-      <CardHeader className="flex-row items-center gap-2 pb-2">
-        <Wrench className="size-4 text-blue-700" />
-        <CardTitle className="text-sm">{name}</CardTitle>
-        <Badge variant={state === 'error' ? 'destructive' : 'secondary'} className="ml-auto">{state}</Badge>
-      </CardHeader>
-      <CardContent className="grid gap-2 text-xs sm:grid-cols-2">
-        <pre className="overflow-auto rounded-md bg-white p-2 text-muted-foreground"><b>Input</b>{'\n'}{input === undefined ? 'Waiting for input' : json(input)}</pre>
-        <pre className="overflow-auto rounded-md bg-white p-2 text-muted-foreground"><b>Result</b>{'\n'}{output === undefined ? 'Waiting for result' : json(output)}</pre>
-      </CardContent>
-    </Card>
+    <Tool className="mt-3" defaultOpen={displayState === 'output-error'}>
+      <ToolHeader type="dynamic-tool" toolName={name} state={displayState} />
+      <ToolContent>
+        {input !== undefined && <ToolInput input={input} />}
+        <ToolOutput output={output} errorText={error} />
+      </ToolContent>
+    </Tool>
   )
 }
 
@@ -35,9 +37,12 @@ function ChatMessage({ message }: { message: UIMessage }) {
   return (
     <div className={isUser ? 'ml-auto max-w-[85%] rounded-xl bg-secondary px-4 py-3 text-sm' : 'max-w-[85%] text-sm'}>
         {message.parts.map((part, index) => {
-          if (part.type === 'text') return <p key={index} className="whitespace-pre-wrap leading-6">{part.content}</p>
-          if (part.type === 'tool-call') return <ToolCall key={part.id} name={part.name} input={part.input} output={part.output} state={part.state} />
-          if (part.type === 'tool-result') return <ToolCall key={part.toolCallId} name={part.name ?? 'tool result'} output={part.content} state={part.state === 'error' ? 'error' : 'complete'} />
+          if (part.type === 'text') {
+            if (isUser) return <p key={index} className="whitespace-pre-wrap leading-6">{part.content}</p>
+            return <MessageResponse key={index}>{part.content}</MessageResponse>
+          }
+          if (part.type === 'tool-call') return <ToolWidget key={part.id} name={part.name} input={part.input} output={part.output} state={part.state} />
+          if (part.type === 'tool-result') return <ToolWidget key={part.toolCallId} name={part.name ?? 'tool result'} output={part.content} state={part.state} error={part.error} />
           return null
         })}
     </div>

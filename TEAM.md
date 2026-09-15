@@ -20,7 +20,7 @@
 | Nguyễn Thị Hải Mi | 2A202602667 | [haimi612003](https://github.com/haimi612003) | Teammate; chạy eval, version log và report | `fee7e07`, `98a93c3`, `8d7230a`, `525bdc1`; PR #4, #15, #17, #21 |
 | Trần Nguyễn Trí Dũng | 2A202602784 | [bananayass](https://github.com/bananayass) | Teammate; phân tích prompt và cải thiện `system_prompt.md` | `2a170df`, `05d76d8`, `0bd2ada`, `dce92ab`, `fdf1e99`; PR #5, #10, #14, #20 |
 | Nguyễn Đức Đông | 2A202602367 | [nguyenducdong22](https://github.com/nguyenducdong22) | Teammate; viết group eval và phân tích run | `5265a9e`, `c92f105`, `f2c185b`; PR #3, #6, #19 |
-
+| Văn Thành Huy | 2A202602763 | [thanhhuyvan](https://github.com/thanhhuyvan) | Teammate; phân tích tool và cải thiện `tools.md` | `05287ed`, `e2703de`, `2b550fd`, `280a46d`, `df12455`; PR #7, #11, #13, #16 |
 
 ## Nhận xét chung
 

@@ -13,9 +13,9 @@ tools:
       type: object
       properties:
         question: {type: string, default: "", description: "Ask for missing information or explicit confirmation."}
-        response_type: {type: string, enum: [text, yes_no, choice], default: "text", description: "Use yes_no before a write action; use choice for enum decisions."}
+        response_type: {type: string, enum: [text, yes_no, choice], default: "text", description: "Always supply this argument explicitly. Use text for missing identifiers or free-text information, yes_no for write confirmation, and choice for ambiguous enum values."}
         options: {type: array, default: [], items: {type: string}, description: "Choices for response_type=choice, such as production and staging."}
-      required: [question]
+      required: [question, response_type]
 
   - name: search_kb
     description: "Search internal troubleshooting instructions and how-to articles; do not use for live service status or a specific device check."
@@ -23,7 +23,7 @@ tools:
       type: object
       properties:
         query: {type: string, default: "", description: "Nội dung cần tìm"}
-        category: {type: string, enum: [all, vpn, email, wifi, printing, account, security, hardware, software, meeting_room], default: "all", description: "Nhóm hướng dẫn"}
+        category: {type: string, enum: [all, vpn, email, wifi, printing, account, security, hardware, software, meeting_room], default: "all", description: "Choose the specific topic when known: email for mail clients and mailbox setup, vpn for VPN, wifi for wireless connectivity, printing for printers, and account for account access. Use all only for broad or unspecified topics."}
         top_k: {type: integer, default: 3, description: "Số kết quả"}
       required: [query]
 
@@ -96,12 +96,12 @@ tools:
       required: [query]
 
   - name: create_ticket
-    description: "Create a ticket only after explicit confirmation of the current summary, priority, and asset_id. If details change, ask for confirmation again and respect cancellation."
+    description: "Create a ticket only after explicit user confirmation of the current summary, priority, and asset_id when available. Before confirmation, call clarify with response_type=yes_no and show the ticket details in its question; do not call create_ticket with confirmed=false to ask for confirmation. A creation request is not itself confirmation. If details change, ask again. If the user cancels or pauses, do not create the ticket."
     parameters:
       type: object
       properties:
         summary: {type: string, default: "", description: "Tóm tắt sự cố"}
         priority: {type: string, enum: [low, medium, high, critical], default: "medium", description: "Mức ưu tiên"}
         asset_id: {type: string, default: "", description: "Mã tài sản nếu có"}
-        confirmed: {type: boolean, default: false, description: "Đã được người dùng xác nhận"}
+        confirmed: {type: boolean, default: false, description: "Set true only after explicit user confirmation of the current ticket details. If confirmation is absent or stale, call clarify instead of this tool."}
       required: [summary]

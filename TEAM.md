@@ -20,7 +20,7 @@
 | Nguyễn Thị Hải Mi | 2A202602667 | [haimi612003](https://github.com/haimi612003) | Teammate; chạy eval, version log và report | `fee7e07`, `98a93c3`, `8d7230a`, `525bdc1`; PR #4, #15, #17, #21 |
 | Trần Nguyễn Trí Dũng | 2A202602784 | [bananayass](https://github.com/bananayass) | Teammate; phân tích prompt và cải thiện `system_prompt.md` | `2a170df`, `05d76d8`, `0bd2ada`, `dce92ab`, `fdf1e99`; PR #5, #10, #14, #20 |
 | Nguyễn Đức Đông | 2A202602367 | [nguyenducdong22](https://github.com/nguyenducdong22) | Teammate; viết group eval và phân tích run | `5265a9e`, `c92f105`, `f2c185b`; PR #3, #6, #19 |
-
+| Văn Thành Huy | 2A202602763 | [thanhhuyvan](https://github.com/thanhhuyvan) | Teammate; phân tích tool và cải thiện `tools.md` | `05287ed`, `e2703de`, `2b550fd`, `280a46d`, `df12455`; PR #7, #11, #13, #16 |
 
 ## Nhận xét chung
 
@@ -66,3 +66,29 @@ Sao chép mục này cho từng thành viên.
 - Điều đã học: Đánh giá được trust boundary và các dạng lỗi tool calling phổ biến; hiểu rõ hiện tượng regression khi tối ưu prompt; biết phân tích dựa trên dữ liệu thực nghiệm thay vì cảm tính.
 - AI/công cụ đã dùng và cách kiểm tra: Dùng `scripts/parse_runs.py` xuất CSV; dùng AI Assistant phân tích log/transcript; kiểm tra đối soát thủ công giữa `expected_tool` và `actual_tool` để đảm bảo báo cáo chính xác.
 - Thời điểm đã tự nộp URL repo chung trên VLearn: 22:45:00 15/9/2026
+
+### Văn Thành Huy - 2A202602763
+
+- Phần việc và file/commit/PR: Phân tích tool/input trong
+  `analysis/v0-tools.md`; cải thiện `starter_v0/artifacts/tools.yaml` và ghi
+  lý do trong `analysis/v1-tools-rationale.md`, `analysis/v2-tools.md`,
+  `analysis/v3-tool.md`. Commit đóng góp: `da2b70c` (phân tích ban đầu),
+  `3581b7a` (tool declaration v1), `41f73e2` (phân tích v2), `877f007`
+  (tool declaration và phân tích v3).
+- Quyết định và cách xử lý: Làm rõ điều kiện chọn tool, hỏi lại khi thiếu ID
+  và yêu cầu xác nhận trước khi tạo ticket. Từ các lỗi trong run v1, bổ sung
+  `response_type` vào danh sách bắt buộc của `clarify`, làm rõ cách chọn
+  category cho `search_kb`, và hướng dẫn dùng `clarify` trước `create_ticket`.
+  Khó khăn cá nhân: Vấn đề về tool không được gọi, cần phân tích kỹ prompt và 
+   tool.
+- Điều đã học: phân biệt sai tool, sai tham số và lỗi thực thi; 
+  vì sao giá trị mặc định có thể giúp tool
+  chạy đúng nhưng vẫn không đạt yêu cầu kiểm thử; giới hạn của mô tả tool
+  đối với việc bảo đảm xác nhận.
+- AI/công cụ đã dùng và cách kiểm tra: Dùng Codex hỗ trợ đọc source, phân
+  tích trace, sửa mô tả/schema và soạn bản nháp báo cáo; dùng Git để quản lý
+  thay đổi. Đã kiểm tra YAML, đối chiếu tên tool/tham số với registry và đọc
+  cả arguments lẫn tool results trong run v1.
+- Thời điểm đã tự nộp URL repo chung trên VLearn: 9:04:51 PM 15/9/2026.
+
+### Họ và tên - MSSV

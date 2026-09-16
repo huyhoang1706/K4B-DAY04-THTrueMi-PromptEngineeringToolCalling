@@ -342,6 +342,27 @@ nhóm tự xây.
   dụng được cho câu hỏi mới. Vì vậy mình xem điểm trên bộ cố định là thước đo
   của riêng bộ đó, và chỉ tin agent đã tốt hơn khi nó còn đúng trên case mới.
 
+### B7.5 Reflection cá nhân — Văn Thành Huy - 2A202602763
+
+- Nhiệm vụ đảm nhận chính trong bài lab: Phân tích tool/input trong
+  `analysis/v0-tools.md`; cải thiện `starter_v0/artifacts/tools.yaml` và ghi
+  lý do trong `analysis/v1-tools-rationale.md`, `analysis/v2-tools.md`,
+  `analysis/v3-tool.md`. Commit đóng góp: `da2b70c` (phân tích ban đầu),
+  `3581b7a` (tool declaration v1), `41f73e2` (phân tích v2), `877f007`
+  (tool declaration và phân tích v3).
+- Quyết định và cách xử lý: Làm rõ điều kiện chọn tool, hỏi lại khi thiếu ID
+  và yêu cầu xác nhận trước khi tạo ticket. Từ các lỗi trong run v1, bổ sung
+  `response_type` vào danh sách bắt buộc của `clarify`, làm rõ cách chọn
+  category cho `search_kb`, và hướng dẫn dùng `clarify` trước `create_ticket`.
+  Khó khăn cá nhân: Vấn đề về tool không được gọi, cần phân tích kỹ prompt và tool.
+- Điều đã học: phân biệt sai tool, sai tham số và lỗi thực thi; vì sao giá trị
+  mặc định có thể giúp tool chạy đúng nhưng vẫn không đạt yêu cầu kiểm thử;
+  giới hạn của mô tả tool đối với việc bảo đảm xác nhận.
+- AI/công cụ đã dùng và cách kiểm tra: Dùng Codex hỗ trợ đọc source, phân
+  tích trace, sửa mô tả/schema và soạn bản nháp báo cáo; dùng Git để quản lý
+  thay đổi. Đã kiểm tra YAML, đối chiếu tên tool/tham số với registry và đọc
+  cả arguments lẫn tool results trong run v1.
+
 
 # PHẦN C — Checkout trước khi nộp
 

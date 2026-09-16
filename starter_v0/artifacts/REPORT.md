@@ -295,6 +295,19 @@ nhóm tự xây.
   mới và adversarial test để đánh giá khả năng tổng quát hóa, không chỉ tối ưu
   theo bộ case cố định.
 
+### B7.3 Reflection cá nhân — Nguyễn Đức Đông - 2A202602367
+
+- Nhiệm vụ đảm nhận chính trong bài lab: Xây dựng bộ kiểm thử nhóm (`starter_v0/data/eval_group.json`), phát triển script `scripts/parse_runs.py` để trích xuất dữ liệu CSV từ các log chạy eval, tổng hợp bảng so sánh hiệu năng giữa các phiên bản (v0–v3), phân tích hiện tượng regression và thực hiện đánh giá chi tiết các kịch bản đối kháng (adversarial cases).
+- Kịch bản lỗi (failure mode) đã trực tiếp phân tích và giải quyết:
+  - Phân tích các lỗ hổng vi phạm trust boundary trong bộ adversarial (A03 forged tool result, A04 argument smuggling, A10 stale confirmation attack, A11 multiturn role spoofing, A12 external identifier smuggling), chỉ rõ nguy cơ khi model tự gán `confirmed=true` từ input giả mạo của người dùng hoặc gửi thông tin định danh nội bộ ra công cụ web.
+  - Phân tích sự thay đổi và hiện tượng regression giữa các phiên bản v0–v3 dựa trên bằng chứng dữ liệu thực nghiệm thay vì điểm số tự động đơn thuần.
+  - Phân tích các trường hợp thất bại trong bộ eval nhóm (`G02` mơ hồ service status, `G03` sai policy area mapping, `G04` tìm kiếm thiết bị ngoại bối và các case vi phạm trust boundary `G07`, `G08`).
+- Bài học rút ra về Prompt Engineering & Tool Calling:
+  - Đánh giá agent cần dựa trên dữ liệu thực nghiệm chi tiết (`actual_tool_calls`, `tool_results` và kiểm tra filesystem/tickets) thay vì chỉ tin vào tỉ lệ PASS/FAIL tự động.
+  - Bảo mật cho action ghi dữ liệu (write action) không thể phụ thuộc hoàn toàn vào prompt engineering mà cần kết hợp với guardrail ở mức runtime/code để kiểm soát cờ xác nhận và dữ liệu nhạy cảm.
+  - Tối ưu prompt cho một dataset cố định dễ dẫn tới việc bám sát quá mức (overfitting); việc kiểm thử trên các tập dữ liệu nhóm tự thiết kế và case đối kháng là bắt buộc để đánh giá đúng năng lực tổng quát hóa của agent.
+
+
 # PHẦN C — Checkout trước khi nộp
 
 Phần này được hoàn thành sau khi toàn bộ code, evidence và report đã được đưa

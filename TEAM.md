@@ -76,16 +76,6 @@ Sao chép mục này cho từng thành viên.
   metric và `provider_error_cases`, không chỉ dựa vào automatic score.
 - Thời điểm đã tự nộp URL repo chung trên VLearn: 22:37:16 15/9/2026
 
-### Nguyễn Đức Đông — 2A202602367
-
-- Phần việc và file/commit/PR: Viết `starter_v0/data/eval_group.json`; dùng `scripts/parse_runs.py` trích xuất CSV từ run; chỉ ra nhóm lỗi ưu tiên từ kết quả thực tế; commit bảng so sánh v0–v3, phân tích regression và phân tích ít nhất 3 adversarial cases.
-  Commit trực tiếp: `5265a9e` (group eval), `c92f105` (parse CSV & phân tích run), `f2c185b` (so sánh v0–v3 & adversarial cases).
-  PR liên quan: #3, #6, #19.
-- Quyết định, khó khăn và cách xử lý: Chuẩn hóa xuất CSV bằng `scripts/parse_runs.py` để so sánh v0–v3 minh bạch. Khó khăn chính là phân tích các trường hợp adversarial cases phức tạp vi phạm trust boundary. Xử lý bằng cách phân tích theo 4 mục: Expected boundary, Actual calls, Tác động thực tế và Kết luận.
-- Điều đã học: Đánh giá được trust boundary và các dạng lỗi tool calling phổ biến; hiểu rõ hiện tượng regression khi tối ưu prompt; biết phân tích dựa trên dữ liệu thực nghiệm thay vì cảm tính.
-- AI/công cụ đã dùng và cách kiểm tra: Dùng `scripts/parse_runs.py` xuất CSV; dùng AI Assistant phân tích log/transcript; kiểm tra đối soát thủ công giữa `expected_tool` và `actual_tool` để đảm bảo báo cáo chính xác.
-- Thời điểm đã tự nộp URL repo chung trên VLearn: 22:45:00 15/9/2026
-
 ### Văn Thành Huy - 2A202602763
 
 - Phần việc và file/commit/PR: Phân tích tool/input trong
@@ -99,7 +89,8 @@ Sao chép mục này cho từng thành viên.
   `response_type` vào danh sách bắt buộc của `clarify`, làm rõ cách chọn
   category cho `search_kb`, và hướng dẫn dùng `clarify` trước `create_ticket`.
   Khó khăn cá nhân: Vấn đề về tool không được gọi, cần phân tích kỹ prompt và 
-   tool.
+   tool.0
+   
 - Điều đã học: phân biệt sai tool, sai tham số và lỗi thực thi; 
   vì sao giá trị mặc định có thể giúp tool
   chạy đúng nhưng vẫn không đạt yêu cầu kiểm thử; giới hạn của mô tả tool
@@ -191,3 +182,14 @@ Temperature 0 vẫn cho kết quả khác nhau giữa các lần chạy.
   run, `actual_tool_calls`, `tool_results`, trạng thái từng transcript và xác
   nhận không đưa API key hay ticket phát sinh vào commit.
 - Thời điểm đã tự nộp URL repo chung trên VLearn: 23:45:32 15/9/2026
+
+### Nguyễn Đức Đông — 2A202602367
+
+- Phần việc và file/commit/PR: Viết `starter_v0/data/eval_group.json`; dùng `scripts/parse_runs.py` trích xuất CSV từ run; chỉ ra nhóm lỗi ưu tiên từ kết quả thực tế; commit bảng so sánh v0–v3, phân tích regression và phân tích ít nhất 3 adversarial cases.
+  Commit trực tiếp: `5265a9e` (group eval), `c92f105` (parse CSV & phân tích run), `f2c185b` (so sánh v0–v3 & adversarial cases).
+  PR liên quan: #3, #6, #19.
+- Quyết định, khó khăn và cách xử lý: Chuẩn hóa xuất CSV bằng `scripts/parse_runs.py` để so sánh v0–v3 minh bạch. Khó khăn chính là phân tích các trường hợp adversarial cases phức tạp vi phạm trust boundary. Xử lý bằng cách phân tích theo 4 mục: Expected boundary, Actual calls, Tác động thực tế và Kết luận.
+- Điều đã học: Đánh giá được trust boundary và các dạng lỗi tool calling phổ biến; hiểu rõ hiện tượng regression khi tối ưu prompt; biết phân tích dựa trên dữ liệu thực nghiệm thay vì cảm tính.
+- AI/công cụ đã dùng và cách kiểm tra: Dùng `scripts/parse_runs.py` xuất CSV; dùng AI Assistant phân tích log/transcript; kiểm tra đối soát thủ công giữa `expected_tool` và `actual_tool` để đảm bảo báo cáo chính xác.
+- Thời điểm đã tự nộp URL repo chung trên VLearn: 22:45:00 15/9/2026
+

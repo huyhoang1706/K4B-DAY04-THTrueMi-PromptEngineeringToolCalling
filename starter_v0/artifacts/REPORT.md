@@ -307,6 +307,41 @@ nhóm tự xây.
   - Bảo mật cho action ghi dữ liệu (write action) không thể phụ thuộc hoàn toàn vào prompt engineering mà cần kết hợp với guardrail ở mức runtime/code để kiểm soát cờ xác nhận và dữ liệu nhạy cảm.
   - Tối ưu prompt cho một dataset cố định dễ dẫn tới việc bám sát quá mức (overfitting); việc kiểm thử trên các tập dữ liệu nhóm tự thiết kế và case đối kháng là bắt buộc để đánh giá đúng năng lực tổng quát hóa của agent.
 
+### B7.4 Reflection cá nhân — Nguyễn Thị Hải Mi - 2A202602667
+
+- Nhiệm vụ đảm nhận chính trong bài lab: chạy eval chính thức và giữ evidence
+  cho cả 4 version. Chạy baseline v0 trên ba bộ base/adversarial/extension
+  (21/30, 5/12, 6/10), rồi chạy base cho v1 (26/30), v2 (28/30) và v3 (30/30)
+  với cùng provider/model `openai` / `gpt-4o-mini` và cùng
+  `data/eval_base.json`; ghi `artifacts/version_log.csv` sau từng vòng; điền
+  mục A2, A3, B1, B2 và phần B4a của v0 trong report. Evidence: PR #4, #12,
+  #15, #17, #21.
+- Kịch bản lỗi (failure mode) đã trực tiếp phân tích và giải quyết:
+  - Đo và phân tích 9 case FAIL của v0: tự đoán ID (`H10`, `H11`), môi trường
+    mơ hồ (`H19`), xác nhận ticket (`H12`, `M05`, `M09`), sai tool/tham số
+    (`H04`, `H13`, `H17`); và 7 case adversarial, trong đó 4 tấn công đã tạo
+    ticket thật.
+  - Phát hiện regression giữa các vòng bằng cách so cùng bộ case: `H03` sai
+    `category` ở v1 và v2 (ở v2 tool trả về rỗng), `H06` hỏi lại thừa ở v2.
+  - Xử lý vấn đề quy trình: prompt và tools được merge song song với cùng nhãn
+    version. Mình chạy từng vòng tại đúng commit của vòng đó (`10c1c34` cho
+    v1, `88b9808` cho v2, `b91fd8d` cho v3) và đối chiếu hash artifact trong
+    file run, để v1 và v2 mỗi vòng chỉ đổi một artifact; v3 gộp hai thay đổi
+    và được ghi rõ trong version log.
+  - Kiểm tra evidence không chỉ bằng điểm: đọc `tool_results` từng case và
+    kiểm tra thư mục `tickets/` sau mỗi run. Từ v1 trở đi, bộ base không còn
+    ticket nào bị ghi.
+- Bài học rút ra về Prompt Engineering & Tool Calling: điều làm mình bất ngờ
+  nhất là cùng artifact v3, bộ base đạt 30/30
+  ([run](../runs/v3_B_base_openai_20260915T205129725320.json)) nhưng bộ case
+  nhóm tự viết chỉ đạt 5/10
+  ([run](../runs/v3_B_group_openai_20260915T222009004794.json), FAIL `G02`,
+  `G03`, `G04`, `G07`, `G08`). Khi sửa prompt bám theo đúng những câu trong bộ
+  case cố định — ví dụ `system_prompt.md` nêu thẳng "Outlook" và "demo/test/QA"
+  vốn lấy từ `H03` và `H19` — thì điểm trên bộ đó tăng, nhưng agent không áp
+  dụng được cho câu hỏi mới. Vì vậy mình xem điểm trên bộ cố định là thước đo
+  của riêng bộ đó, và chỉ tin agent đã tốt hơn khi nó còn đúng trên case mới.
+
 
 # PHẦN C — Checkout trước khi nộp
 
